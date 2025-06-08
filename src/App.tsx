@@ -1,17 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PromptPanel from './PromptPanel';
 import LivePreview from './LivePreview';
 import CodeOutput from './CodeOutput';
 import DownloadButton from './DownloadButton';
 
 function App() {
+  // Hold parsed multi-file responses
+  const [files, setFiles] = useState<Record<string, string>>({});
+  // The code string for preview & download (using index.html by default)
   const [code, setCode] = useState('');
   const [showCode, setShowCode] = useState(false);
 
+  // When files update, use index.html content for preview and code output
+  useEffect(() => {
+    if (files['index.html']) {
+      setCode(files['index.html']);
+    }
+  }, [files]);
+
   return (
     <div style={{ display: 'flex', height: '100vh', backgroundColor: '#f1f5f9' }}>
-      <PromptPanel setCode={setCode} />
+      {/* PromptPanel now sets multiple files */}
+      <PromptPanel setFiles={setFiles} />
+
       <div style={{ flex: 1, position: 'relative' }}>
+        {/* Action buttons: toggle code view and download */}
         <div style={{
           position: 'absolute',
           top: '1rem',
@@ -36,6 +49,7 @@ function App() {
           </button>
           <DownloadButton code={code} />
         </div>
+
         <div style={{
           width: '100%',
           height: '100%',

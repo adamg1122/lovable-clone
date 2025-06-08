@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import { fetchGeneratedCode } from './api';
+import { parseMultiFileResponse } from './utils/parser';
 
-const PromptPanel = ({ setCode }: { setCode: (code: string) => void }) => {
+interface PromptPanelProps {
+  setFiles: (files: Record<string, string>) => void;
+}
+
+const PromptPanel = ({ setFiles }: PromptPanelProps) => {
   const [prompt, setPrompt] = useState('');
 
   const handleGenerate = async () => {
-    const response = await fetchGeneratedCode(prompt);
-    setCode(response);
+    // Fetch the raw GPT response
+    const rawResponse = await fetchGeneratedCode(prompt);
+    // Parse into multiple files
+    const files = parseMultiFileResponse(rawResponse);
+    // Update parent state with file map
+    setFiles(files);
   };
 
   return (
