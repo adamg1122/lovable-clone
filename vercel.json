@@ -1,14 +1,8 @@
 {
-  "builds": [
-    {
-      "src": "build.mjs",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/dist/$1"
-    }
+  "outputDirectory": "dist",
+  "buildCommand": "node build.mjs",
+  "ignoreCommand": "echo 'no ignore needed'",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/$1" }
   ]
 }
