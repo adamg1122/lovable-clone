@@ -1,62 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import PromptPanel from './PromptPanel';
 import LivePreview from './LivePreview';
-import CodeOutput from './CodeOutput';
 import DownloadButton from './DownloadButton';
+import { parseMultiFileResponse } from './utils/parser';
+import FileExplorer from './FileExplorer';
 
 function App() {
-  // Hold parsed multi-file responses
+  // Map of filename -> content
   const [files, setFiles] = useState<Record<string, string>>({});
-  // The code string for preview & download (using index.html by default)
+  // Currently selected file in the explorer
+  const [activeFile, setActiveFile] = useState<string>('index.html');
+  // Content of active file for preview & download
   const [code, setCode] = useState('');
   const [showCode, setShowCode] = useState(false);
 
-  // When files update, use index.html content for preview and code output
+  // When files update, ensure active file exists & update code
   useEffect(() => {
-    if (files['index.html']) {
-      setCode(files['index.html']);
+    if (files[activeFile]) {
+      setCode(files[activeFile]);
+    } else if (files['index.html']) {
+      setActiveFile('index.html');
     }
-  }, [files]);
+  }, [files, activeFile]);
+
+  // Handle file content edits
+  const handleEdit = (newContent: string) => {
+    setFiles(prev => ({ ...prev, [activeFile]: newContent }));
+    setCode(newContent);
+  };
 
   return (
     <div style={{ display: 'flex', height: '100vh', backgroundColor: '#f1f5f9' }}>
-      {/* PromptPanel now sets multiple files */}
+      {/* Prompt Panel for generating project files */}
       <PromptPanel setFiles={setFiles} />
 
+      {/* File Explorer & Editor */}
+      <FileExplorer
+        files={files}
+        activeFile={activeFile}
+        setActiveFile={setActiveFile}
+        code={code}
+        onEdit={handleEdit}
+        showCode={showCode}
+      />
+
+      {/* Live Preview and Actions */}
       <div style={{ flex: 1, position: 'relative' }}>
-        {/* Action buttons: toggle code view and download */}
-        <div style={{
-          position: 'absolute',
-          top: '1rem',
-          right: '1rem',
-          zIndex: 10,
-          display: 'flex',
-          gap: '0.5rem'
-        }}>
+        <div style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 10, display: 'flex', gap: '0.5rem' }}>
           <button
             onClick={() => setShowCode(!showCode)}
-            style={{
-              backgroundColor: '#0f172a',
-              color: '#fff',
-              padding: '0.5rem 1rem',
-              borderRadius: '8px',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-          >
+            style={{ backgroundColor: '#0f172a', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer', transition: 'all 0.3s ease' }}>
             {showCode ? 'Hide Code' : 'Show Code'}
           </button>
           <DownloadButton code={code} />
         </div>
-
-        <div style={{
-          width: '100%',
-          height: '100%',
-          opacity: 1,
-          transition: 'opacity 0.5s ease-in-out'
-        }}>
-          {showCode ? <CodeOutput code={code} /> : <LivePreview code={code} />}
+        <div style={{ width: '100%', height: '100%', opacity: 1, transition: 'opacity 0.5s ease-in-out' }}>
+          {showCode ? <pre style={{ padding: '1rem', fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>{code}</pre>
+                    : <LivePreview code={code} />}
         </div>
       </div>
     </div>
