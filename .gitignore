@@ -32,7 +32,7 @@ bower_components
 web_modules/
 
 # Build output
-dist/
+#dist/
 build/
 .cache
 .parcel-cache
@@ -64,3 +64,4 @@ lib-cov
 .pnp.*
 .vscode-test
 .tern-port
+"node_modules/" 
