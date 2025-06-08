@@ -3,7 +3,6 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "ignoreCommand": "echo 'no ignore needed'",
   "rewrites": [
     { "source": "/(.*)", "destination": "/$1" }
   ]
