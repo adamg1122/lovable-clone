@@ -1,7 +1,13 @@
-vhwyrkkkzxcgzznn
+import { build } from 'vite';
 
-Apollo.AI
-1 JobTitles
-2 Location
-3 #of employees
-4 Industry and keywords
+build({
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+  },
+})
+  .then(() => console.log('✅ Build completed'))
+  .catch((err) => {
+    console.error('❌ Build failed:', err);
+    process.exit(1);
+  });
